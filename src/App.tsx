@@ -5,6 +5,18 @@ import VoiceInput from "./VoiceInput";
 import { useAtom } from "jotai";
 import { recorderAtom, recordingAtom } from "./lib/store";
 
+import { Howl } from "howler";
+
+import startSound from "./audio/start.wav";
+import stopSound from "./audio/stop.wav";
+import playSound from "./lib/playSound";
+
+const sources = {
+    start: startSound,
+    stop: stopSound,
+};
+
+
 function App() {
     // Keep hold of the state
     const conversationState = useRef<any>(null);
@@ -29,6 +41,7 @@ function App() {
     };
 
     const setRecording = (value: boolean) => {
+        playSound(sources[value ? "start" : "stop"]);
         _setRecording(value);
     };
         

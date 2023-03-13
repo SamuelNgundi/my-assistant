@@ -83,7 +83,7 @@ function App() {
 
     return (
         <div className={styles.root}>
-            <h1 className={styles.h1}>Assist310</h1>
+            <h1 className={styles.h1}>Voice Assistant AI</h1>
             <VoiceInput transcription={transcription} />
             {error && <div className={styles.errorContainer}>{error}</div>}
         </div>

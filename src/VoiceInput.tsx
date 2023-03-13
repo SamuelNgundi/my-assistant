@@ -1,3 +1,4 @@
+import { Wave } from "@foobar404/wave";
 import { useAtom } from "jotai";
 import { useRef } from "react";
 import { Mic, MicOff } from "react-feather";
@@ -9,6 +10,7 @@ interface VoiceInputProps {
 }
 
 export default function VoiceInput({ transcription }: VoiceInputProps) {
+    const canvasEl = useRef<HTMLCanvasElement>(null);
     const [recorder] = useAtom(recorderAtom);
     const [recording] = useAtom(recordingAtom);
 
@@ -19,6 +21,23 @@ export default function VoiceInput({ transcription }: VoiceInputProps) {
         }
 
         recorder.start();
+
+        recorder.on("start", () => {
+            if (canvasEl.current) {
+                let wave = new Wave(
+                    {
+                        source: recorder.source as MediaElementAudioSourceNode,
+                        context: recorder.audioCtx as AudioContext,
+                    },
+                    canvasEl.current
+                );
+                wave.addAnimation(
+                    new wave.animations.Lines({
+                        top: true,
+                    })
+                );
+            }
+        });
     };
 
     const Icon = recording ? MicOff : Mic;

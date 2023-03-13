@@ -18,6 +18,16 @@ function App() {
     const [recorder, setRecorder] = useAtom(recorderAtom);
     const [recording, _setRecording] = useAtom(recordingAtom);
 
+    const speech = new SpeechSynthesisUtterance();
+
+    // Set to your language code
+    speech.lang = "en";
+
+    const say = (text: string) => {
+    speech.text = text;
+    window.speechSynthesis.speak(speech);
+    };
+
     const setRecording = (value: boolean) => {
         _setRecording(value);
     };
@@ -42,9 +52,10 @@ function App() {
     }, []);
 
     const handleResult = (result: any) => {
-
+        say(result["SpokenResponseLong"]);
     };
 
+    
     useEffect(() => {
       // @ts-ignore (2339)
       const audioRecorder = new window.Houndify.AudioRecorder();

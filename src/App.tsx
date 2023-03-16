@@ -3,9 +3,7 @@ import styles from "./App.module.scss";
 import initVoiceRequest from "./lib/initVoiceRequest";
 import VoiceInput from "./VoiceInput";
 import { useAtom } from "jotai";
-import { recorderAtom, recordingAtom } from "./lib/store";
-
-import { Howl } from "howler";
+import { recorderAtom, recordingAtom } from "./store";
 
 import startSound from "./audio/start.wav";
 import stopSound from "./audio/stop.wav";
@@ -16,6 +14,15 @@ const sources = {
     stop: stopSound,
 };
 
+const speech = new SpeechSynthesisUtterance();
+
+// Set to your language code
+speech.lang = "en";
+
+const say = (text: string) => {
+    speech.text = text;
+    window.speechSynthesis.speak(speech);
+};
 
 function App() {
     // Keep hold of the state
@@ -30,80 +37,67 @@ function App() {
     const [recorder, setRecorder] = useAtom(recorderAtom);
     const [recording, _setRecording] = useAtom(recordingAtom);
 
-    const speech = new SpeechSynthesisUtterance();
-
-    // Set to your language code
-    speech.lang = "en";
-
-    const say = (text: string) => {
-    speech.text = text;
-    window.speechSynthesis.speak(speech);
-    };
-
     const setRecording = (value: boolean) => {
         playSound(sources[value ? "start" : "stop"]);
         _setRecording(value);
     };
-        
-        
-    const onResponse = useCallback((response: any, info: any) => {
-      if (response.AllResults && response.AllResults.length) {
-          const result = response.AllResults[0];
-          conversationState.current = result.ConversationState;
-          handleResult(result);
-          setTranscription("");
 
+    const onResponse = useCallback((response: any, info: any) => {
+        if (response.AllResults && response.AllResults.length) {
+            const result = response.AllResults[0];
+            conversationState.current = result.ConversationState;
+            handleResult(result);
+            setTranscription("");
         }
     }, []);
 
     const onTranscriptionUpdate = useCallback((transcript: any) => {
-      setTranscription(transcript.PartialTranscript);
+        setTranscription(transcript.PartialTranscript);
     }, []);
 
     const onError = useCallback((error: any, info: any) => {
-      setError(JSON.stringify(error));
+        setError(JSON.stringify(error));
     }, []);
 
     const handleResult = (result: any) => {
+        // We'll add more here later
         say(result["SpokenResponseLong"]);
     };
 
-    
     useEffect(() => {
-      // @ts-ignore (2339)
-      const audioRecorder = new window.Houndify.AudioRecorder();
-      setRecorder(audioRecorder);
-  
-      let voiceRequest: any;
-  
-      audioRecorder.on("start", () => {
-          setRecording(true);
-          voiceRequest = initVoiceRequest(
-              audioRecorder,
-              conversationState.current,
-              {
-                  onResponse,
-                  onTranscriptionUpdate,
-                  onError,
-              }
-          );
-      });
-  
-      audioRecorder.on("data", (data: any) => {
-          voiceRequest.write(data);
-      });
-  
-      audioRecorder.on("end", () => {
-          voiceRequest.end();
-          setRecording(false);
-      });
-  
-      audioRecorder.on("error", () => {
-          voiceRequest.abort();
-          setRecording(false);
-      });
-  }, []);
-  
+        // @ts-ignore (2339)
+        const audioRecorder = new window.Houndify.AudioRecorder();
+        setRecorder(audioRecorder);
+
+        let voiceRequest: any;
+
+        audioRecorder.on("start", () => {
+            setRecording(true);
+            voiceRequest = initVoiceRequest(
+                audioRecorder,
+                conversationState.current,
+                {
+                    onResponse,
+                    onTranscriptionUpdate,
+                    onError,
+                }
+            );
+        });
+
+        audioRecorder.on("data", (data: any) => {
+            voiceRequest.write(data);
+        });
+
+        audioRecorder.on("end", () => {
+            voiceRequest.end();
+            setRecording(false);
+        });
+
+        audioRecorder.on("error", () => {
+            voiceRequest.abort();
+            setRecording(false);
+        });
+    }, []);
 
     return (
         <div className={styles.root}>

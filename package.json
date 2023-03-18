@@ -47,6 +47,11 @@
     ]
   },
   "devDependencies": {
+    "@types/howler": "2.2.7",
     "sass": "^1.58.3"
+  },
+  "options": {
+    "allowedHosts": ["localhost", ".localhost"],
+    "proxy": "https://localhost:8080/"
   }
 }

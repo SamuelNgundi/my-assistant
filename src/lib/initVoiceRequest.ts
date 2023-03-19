@@ -9,14 +9,15 @@ export default function initVoiceRequest(
     // @ts-ignore (2339)
     const voiceRequest = new window.Houndify.VoiceRequest({
         //Your Houndify Client ID
-        clientId: "{j9hItNfhWotprfzysgVjKg==}",
+        clientId: "j9hItNfhWotprfzysgVjKg==",
+        clientKey:"kZIWYHr8aANj-wnALYq9xo9F9YOZZEXF4IGlasfjTbff4HbjvUBpmnJEo4_xQUEMUxXRCO_41-FvN5-QRNnZNQ==",
 
         authURL: "/houndifyAuth",
 
         //REQUEST INFO JSON
         //See https://houndify.com/reference/RequestInfo
         requestInfo: {
-            UserID: "test_user",
+            UserID: "samuelwngundi02@gmail.com",
             //See https://www.latlong.net/ for your own coordinates
             Latitude: -1.292066,
             Longitude: 36.821945,

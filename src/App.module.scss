@@ -1,8 +1,10 @@
+$gradient: linear-gradient(to right, #8360c3, #2ebf91);
+
 .root {
     text-align: center;
     width: 100%;
     height: 100%;
-    background-color: #4fb2cf;
+    background: $gradient;
     display: flex;
     flex-direction: column;
     align-items: center;
